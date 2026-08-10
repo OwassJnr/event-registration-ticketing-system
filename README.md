@@ -22,3 +22,7 @@ GET /events
 GET /registrations/{email}
 
 DELETE /registration/{id}
+
+# event-registration-ticketing-system
+
+Event Registration & Ticketing System (A Serverless API)
