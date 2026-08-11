@@ -1,7 +1,7 @@
 # Event Registration & Ticketing System
 ## A Serverless API
 
-![Architecture Diagram](docs/architecture-diagram.png)
+![Architecture Diagram](docs/architecture/architecture-diagram.png)
 
 ---
 
