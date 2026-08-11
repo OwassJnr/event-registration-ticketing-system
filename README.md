@@ -1,116 +1,172 @@
 # Event Registration & Ticketing System
+## A Serverless API
 
-A serverless REST API built on AWS Cloud Services for managing event registrations and ticketing. The system replaces traditional Microsoft Forms and Excel-based workflows with a scalable, automated, and cost-effective cloud-native solution.
+![Architecture Diagram](docs/architecture-diagram.png)
 
 ---
 
-## Project Overview
+## Project Information
 
-This project provides a fully serverless backend that allows users to:
+**Student:** Kwame Opoku Ware
 
-- View available events
+**Program:** AWS Cloud Computing Capstone Project (Generation Ghana & Azubi Africa)
+
+**Project:** Event Registration & Ticketing System - A Serverless API
+
+**GitHub Repository:**
+https://github.com/OwassJnr/event-registration-ticketing-system
+
+**Live Frontend:**
+http://event-registration-opokuware.s3-website-eu-west-1.amazonaws.com
+
+**API URL:**
+https://knpn96h9b4.execute-api.eu-west-1.amazonaws.com/prod
+
+---
+
+# Project Overview
+
+The Event Registration & Ticketing System is a fully serverless cloud-native application built on Amazon Web Services (AWS).
+
+The project replaces manual event registration processes that rely on Microsoft Forms and Excel spreadsheets with a scalable, highly available REST API architecture.
+
+The system enables users to:
+
+- See available events
 - Register for events
-- Retrieve registrations by email
+- Retrieve their registrations
 - Cancel registrations
 
-The solution leverages AWS managed services to achieve scalability, reliability, and low operational overhead.
+The solution leverages AWS managed services to reduce operational overhead while providing scalability, security, monitoring, and cost efficiency.
 
 ---
 
-## Architecture
+# Problem Statement
 
-### High-Level Architecture
+Traditional event registration processes often rely on:
 
-GitHub Repository
-↓
-GitHub Actions (CI/CD)
-↓
-Amazon API Gateway
-↓
-AWS Lambda Functions
-↓
-Amazon DynamoDB
+- Microsoft Forms
+- Excel spreadsheets
+- Manual data entry
+- Manual participant tracking
 
-Supporting Services:
+These approaches introduce challenges such as:
 
-- Amazon CloudWatch (Monitoring & Logging)
-- Amazon SNS (Notifications)
-- AWS Budgets (Cost Monitoring)
+- Poor scalability
+- Human errors
+- Limited automation
+- Difficult reporting
+- Lack of monitoring
+- No centralized API
+
+This project addresses these challenges by implementing a fully serverless event registration platform.
 
 ---
 
-## AWS Services Used
+# Solution Architecture
+
+The application follows a serverless architecture pattern.
+
+## Architecture Components
+
+### Frontend
+
+- HTML5
+- CSS3
+- JavaScript
+
+Hosted using:
+
+- Amazon S3 Static Website Hosting
+
+### Backend
+
+- Amazon API Gateway
+- AWS Lambda
+
+### Database
+
+- Amazon DynamoDB
+
+### Monitoring
+
+- Amazon CloudWatch
+- Amazon SNS
+
+### Cost Management
+
+- AWS Budgets
+
+### DevOps
+
+- GitHub
+- GitHub Actions
+
+---
+
+# Architecture Diagram
+
+![Architecture Diagram](docs/architecture-diagram.png)
+
+### Architecture Flow
+
+1. User accesses frontend hosted on Amazon S3.
+2. Frontend sends requests to Amazon API Gateway.
+3. API Gateway invokes Lambda functions.
+4. Lambda functions interact with DynamoDB tables.
+5. CloudWatch collects logs and metrics.
+6. CloudWatch alarms trigger SNS notifications.
+7. AWS Budgets monitor project spending.
+
+---
+
+# AWS Services Used
 
 | Service | Purpose |
 |----------|----------|
-| AWS Lambda | Serverless business logic |
-| Amazon API Gateway | REST API endpoints |
-| Amazon DynamoDB | Data storage |
-| Amazon SNS | Email notifications |
-| Amazon CloudWatch | Logs, metrics, alarms |
-| AWS Budgets | Cost monitoring |
-| GitHub Actions | CI/CD automation |
+| Amazon S3 | Frontend Hosting |
+| Amazon API Gateway | REST API Endpoints |
+| AWS Lambda | Serverless Business Logic |
+| Amazon DynamoDB | Data Storage |
+| Amazon CloudWatch | Logging & Monitoring |
+| Amazon SNS | Alert Notifications |
+| AWS Budgets | Cost Monitoring |
+| GitHub Actions | Continuous Integration |
 
 ---
 
-## DynamoDB Tables
+# API Endpoints
 
-### Events Table
-
-| Attribute | Type |
-|------------|------|
-| eventId | String (Partition Key) |
-| name | String |
-| date | String |
-| capacity | Number |
-| registeredCount | Number |
-
-### Registration Table
-
-| Attribute | Type |
-|------------|------|
-| registrationId | String (Partition Key) |
-| eventId | String |
-| name | String |
-| email | String |
-| timestamp | String |
-
-### Global Secondary Index
-
-| Index Name | Partition Key |
-|------------|---------------|
-| email-index | email |
-
----
-
-## API Endpoints
-
-### Get All Events
+## Get Events
 
 ```http
 GET /events
 ```
 
-Response:
+Returns all available events.
+
+### Example Response
 
 ```json
 [
   {
     "eventId": "EVT001",
-    "name": "AWS Workshop Accra 2026"
+    "name": "AWS Workshop Accra 2026",
+    "date": "2026-05-15",
+    "capacity": 100
   }
 ]
 ```
 
 ---
 
-### Register for an Event
+## Register For Event
 
 ```http
 POST /register
 ```
 
-Request:
+### Request Body
 
 ```json
 {
@@ -120,7 +176,7 @@ Request:
 }
 ```
 
-Response:
+### Response
 
 ```json
 {
@@ -131,80 +187,186 @@ Response:
 
 ---
 
-### View Registrations
+## Get Registrations
 
 ```http
 GET /registrations/{email}
 ```
 
-Example:
+### Example
 
 ```http
 GET /registrations/john@example.com
 ```
 
-Response:
-
-```json
-[
-  {
-    "registrationId": "xxxxxxxx",
-    "eventId": "EVT001",
-    "email": "john@example.com"
-  }
-]
-```
+Returns all registrations associated with the supplied email address.
 
 ---
 
-### Cancel Registration
+## Cancel Registration
 
 ```http
 DELETE /registration/{id}
 ```
 
-Response:
+### Example
 
-```json
-{
-  "message": "Registration cancelled"
-}
+```http
+DELETE /registration/123456
+```
+
+Removes the selected registration.
+
+---
+
+# DynamoDB Database Design
+
+## Events Table
+
+### Partition Key
+
+```text
+eventId
+```
+
+### Attributes
+
+```text
+eventId
+name
+date
+capacity
+registeredCount
 ```
 
 ---
 
-## CI/CD Pipeline
+## Registration Table
 
-GitHub Actions is used to automate validation and quality checks.
+### Partition Key
 
-### Workflow Features
+```text
+registrationId
+```
+
+### Attributes
+
+```text
+registrationId
+eventId
+name
+email
+timestamp
+```
+
+### Global Secondary Index
+
+```text
+email-index
+```
+
+Used to retrieve registrations by email address.
+
+---
+
+# Lambda Functions
+
+The backend consists of four AWS Lambda functions.
+
+## getEventsFunction
+
+Responsible for retrieving all events.
+
+### DynamoDB Table
+
+```text
+Events
+```
+
+---
+
+## registerFunction
+
+Responsible for creating registrations.
+
+### DynamoDB Tables
+
+```text
+Events
+Registration
+```
+
+---
+
+## getRegistrationsFunction
+
+Retrieves registrations using email-index.
+
+### DynamoDB Table
+
+```text
+Registration
+```
+
+---
+
+## deleteRegistrationFunction
+
+Deletes existing registrations.
+
+### DynamoDB Table
+
+```text
+Registration
+```
+
+---
+
+# CI/CD Pipeline
+
+The project uses GitHub Actions for Continuous Integration.
+
+## Workflow Features
 
 - Automatic execution on push
 - Automatic execution on pull requests
-- Python environment setup
 - Dependency installation
 - Python syntax validation
 
-Workflow file:
+### Workflow File
 
 ```text
 .github/workflows/ci.yml
 ```
 
+### Pipeline Tasks
+
+```yaml
+Checkout Repository
+
+Setup Python
+
+Install Dependencies
+
+Validate Python Syntax
+```
+
 ---
 
-## Monitoring and Logging
+# Monitoring & Logging
 
-### Amazon CloudWatch
+## Amazon CloudWatch Logs
 
-CloudWatch is used for:
+CloudWatch Logs collect:
 
 - Lambda execution logs
-- Application logs
-- Error tracking
-- Alarm monitoring
+- Request information
+- Error details
+- Debug messages
 
-### CloudWatch Alarm
+---
+
+## CloudWatch Alarm
 
 Alarm Name:
 
@@ -212,141 +374,187 @@ Alarm Name:
 RegisterFunctionErrorAlarm
 ```
 
-Purpose:
-
-```text
-Triggers when Lambda errors exceed the configured threshold.
-```
-
----
-
-## Notifications
-
-Amazon SNS is used for email notifications.
-
-Topic:
-
-```text
-EventRegistrationNotifications
-```
-
-Capabilities:
-
-- Alarm notifications
-- Registration notifications
-- Operational alerts
-
----
-
-## Cost Management
-
-AWS Budgets is configured to monitor project spending.
-
 Configuration:
 
-- Monthly Budget: $5
-- Alert Threshold: 80%
+```text
+Metric: Lambda Errors
+
+Threshold: Errors > 1
+
+Period: 5 Minutes
+```
+
+Purpose:
+
+Generate alerts when Lambda execution errors occur.
 
 ---
 
-## Security
+# Notifications
 
-Security measures implemented:
+## Amazon SNS
 
-- IAM Roles for Lambda execution
-- API Gateway integration controls
-- Input validation
-- CloudWatch monitoring
-- Principle of Least Privilege (documented)
-
-Future enhancements:
-
-- JWT Authentication
-- API Keys
-- AWS Cognito Integration
-
----
-
-## Project Structure
+SNS Topic:
 
 ```text
-event-registration-ticketing-system/
+EventRegistrationAlerts
+```
+
+Notification Method:
+
+```text
+Email
+```
+
+Purpose:
+
+Deliver operational alerts generated by CloudWatch alarms.
+
+---
+
+# Security
+
+The application implements several security best practices.
+
+## Principle of Least Privilege
+
+IAM roles grant only the permissions required for each Lambda function.
+
+---
+
+## Input Validation
+
+Registration requests validate:
+
+- Event ID
+- Name
+- Email
+
+before database operations are executed.
+
+---
+
+## Error Handling
+
+All Lambda functions include:
+
+- Try/Except blocks
+- Structured responses
+- Logging of failures
+
+---
+
+# Cost Optimization
+
+AWS Free Tier services were utilized whenever possible.
+
+## Cost Monitoring
+
+AWS Budget Configuration:
+
+```text
+Budget Name:
+EventRegistrationFreeTierBudget
+
+Budget Amount:
+$5 Monthly
+
+Alert Threshold:
+80%
+```
+
+Purpose:
+
+Prevent unexpected AWS costs.
+
+---
+
+# Frontend Deployment
+
+The frontend application is hosted using:
+
+```text
+Amazon S3 Static Website Hosting
+```
+
+### Live Application
+
+http://event-registration-opokuware.s3-website-eu-west-1.amazonaws.com
+
+---
+
+# Repository Structure
+
+```text
+event-registration-ticketing-system
 │
-├── .github/
-│   └── workflows/
+├── .github
+│   └── workflows
 │       └── ci.yml
 │
-├── src/
-│   ├── getEvents/
-│   ├── register/
-│   ├── getRegistrations/
-│   └── deleteRegistration/
+├── frontend
+│   ├── index.html
+│   ├── style.css
+│   └── app.js
 │
-├── template.yaml
-├── requirements.txt
+├── src
+│   ├── getEventsFunction.py
+│   ├── registerFunction.py
+│   ├── getRegistrationsFunction.py
+│   └── deleteRegistrationFunction.py
+│
+├── docs
+│   └── architecture-diagram.png
+│
 ├── events.json
-├── README.md
-├── LICENSE
-└── .gitignore
+├── requirements.txt
+├── template.yaml
+└── README.md
 ```
 
 ---
 
-## Deployment
+# Project Outcomes
 
-### Prerequisites
+Successfully delivered:
 
-- AWS Account
-- GitHub Account
-- Python 3.11+
-- VS Code
-
-### Deployment Steps
-
-1. Create DynamoDB tables
-2. Create Lambda functions
-3. Configure API Gateway
-4. Configure IAM permissions
-5. Deploy API
-6. Configure SNS
-7. Configure CloudWatch alarms
-8. Configure AWS Budgets
+- Serverless REST API
+- Event Registration Platform
+- DynamoDB Database Design
+- GitHub Actions CI/CD Pipeline
+- CloudWatch Monitoring
+- SNS Notifications
+- AWS Budget Monitoring
+- Hosted Frontend Application
+- End-to-End Serverless Architecture
 
 ---
 
-## Challenges Encountered
+# Lessons Learned
 
-During implementation, several challenges were addressed:
+This project provided practical experience with:
 
-- Git merge conflicts during repository setup
-- DynamoDB Decimal serialization issues
-- API Gateway routing configuration
-- Lambda IAM permissions
-- DynamoDB table naming inconsistencies
-- CloudWatch troubleshooting
-
----
-
-## Future Improvements
-
-Potential enhancements include:
-
-- Frontend web application
-- JWT authentication
-- AWS Cognito integration
-- Event capacity validation
-- Email templates
-- Infrastructure as Code deployment
-- Automated testing framework
+- AWS Lambda
+- Amazon API Gateway
+- Amazon DynamoDB
+- Amazon CloudWatch
+- Amazon SNS
+- AWS Budgets
+- GitHub Actions
+- Infrastructure as Code
+- Serverless Architecture Patterns
 
 ---
 
-## Author
+# Author
 
-Owass Jnr
+### Kwame Opoku Ware
+
+AWS Cloud Computing Capstone Project
+
+Generation Ghana & Azubi Africa
+
+GitHub:
+https://github.com/OwassJnr
 
 ---
-
-## License
-
-This project is licensed under the MIT License.
