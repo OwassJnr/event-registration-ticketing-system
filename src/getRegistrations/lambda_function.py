@@ -6,6 +6,13 @@ dynamodb = boto3.resource('dynamodb')
 
 table = dynamodb.Table('Registration')
 
+CORS_HEADERS = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'GET,POST,DELETE,OPTIONS'
+}
+
 
 class DecimalEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -29,6 +36,7 @@ def lambda_handler(event, context):
 
         return {
             'statusCode': 200,
+            'headers': CORS_HEADERS,
             'body': json.dumps(
                 response['Items'],
                 cls=DecimalEncoder
@@ -37,8 +45,11 @@ def lambda_handler(event, context):
 
     except Exception as e:
 
+        print("ERROR:", str(e))
+
         return {
             'statusCode': 500,
+            'headers': CORS_HEADERS,
             'body': json.dumps({
                 'message': str(e)
             })

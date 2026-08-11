@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Registration & Ticketing System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="page">
+
+    <div class="container">
+
+        <div class="header">
+            <h1>Event Registration & Ticketing System</h1>
+        </div>
+
+        <div class="form-grid">
+
+            <div class="form-group">
+                <label>Event Name</label>
+                <input
+                    type="text"
+                    id="eventName"
+                    placeholder="AWS Workshop Accra 2026">
+            </div>
+
+            <div class="form-group">
+                <label>Email Address</label>
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="participant@email.com">
+            </div>
+
+        </div>
+
+        <button id="registerBtn" class="register-btn">
+            Register →
+        </button>
+
+        <div id="message"></div>
+
+        <div class="events-section">
+
+            <h2>Available Events</h2>
+
+            <div id="eventsList">
+
+                <div class="loading">
+                    Loading events...
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="app.js"></script>
+
+</body>
+</html>

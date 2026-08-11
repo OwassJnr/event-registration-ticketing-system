@@ -8,36 +8,41 @@ dynamodb = boto3.resource('dynamodb')
 events_table = dynamodb.Table('Events')
 registrations_table = dynamodb.Table('Registration')
 
+CORS_HEADERS = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'GET,POST,DELETE,OPTIONS'
+}
+
 
 def lambda_handler(event, context):
 
     try:
 
-        # 1. Log the incoming request
+        # Log incoming request
         print("Incoming event:", json.dumps(event))
 
-        body = json.loads(event['body'])
+        body = json.loads(event.get('body', '{}'))
 
         event_id = body.get('eventId')
         name = body.get('name')
         email = body.get('email')
 
-        # 2. Log after extracting the registration data
         print(f"Registration request received for {email}")
 
         # Validation
-
         if not event_id or not name or not email:
 
             return {
                 'statusCode': 400,
+                'headers': CORS_HEADERS,
                 'body': json.dumps({
                     'message': 'Missing required fields'
                 })
             }
 
         # Check event exists
-
         event_response = events_table.get_item(
             Key={'eventId': event_id}
         )
@@ -46,6 +51,7 @@ def lambda_handler(event, context):
 
             return {
                 'statusCode': 404,
+                'headers': CORS_HEADERS,
                 'body': json.dumps({
                     'message': 'Event not found'
                 })
@@ -61,18 +67,17 @@ def lambda_handler(event, context):
             'timestamp': datetime.utcnow().isoformat()
         }
 
-        # 3. Log immediately before saving
         print(f"Saving registration for event {event_id}")
 
         registrations_table.put_item(
             Item=registration
         )
 
-        # 4. Log after successful save
         print(f"Registration successful: {registration_id}")
 
         return {
             'statusCode': 201,
+            'headers': CORS_HEADERS,
             'body': json.dumps({
                 'message': 'Registration successful',
                 'registrationId': registration_id
@@ -81,11 +86,11 @@ def lambda_handler(event, context):
 
     except Exception as e:
 
-        # 5. Log the error
         print("ERROR:", str(e))
 
         return {
             'statusCode': 500,
+            'headers': CORS_HEADERS,
             'body': json.dumps({
                 'message': str(e)
             })
