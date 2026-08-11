@@ -106,7 +106,7 @@ Hosted using:
 
 # Architecture Diagram
 
-![Architecture Diagram](docs/architecture-diagram.png)
+![Architecture Diagram](docs/architecture/architecture-diagram.png)
 
 ### Architecture Flow
 
